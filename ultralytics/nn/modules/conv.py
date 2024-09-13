@@ -542,6 +542,13 @@ class SimFusion_4in(nn.Module):
         
         out = torch.cat([x_l, x_m, x_s, x_n], 1)
         return out
+#--------------------------------new introduced modues from paper -----------------------------------------
+class Low_IFM(nn.Module):
+           def __init__(self, inc, ouc, embed_dims, fuse_block_num):
+           
+
+
+#---------------------------------end newly introduced ----------------------------------------------------
 
 class IFM(nn.Module):
     def __init__(self, inc, ouc, embed_dim_p=96, fuse_block_num=3) -> None:
