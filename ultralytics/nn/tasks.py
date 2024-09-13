@@ -906,6 +906,8 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 args.insert(4, n)  # number of repeats
                 n = 1
         # gold yolo addition
+        elif m is Low_FAM:
+            c2 = sum(ch[x] for x in f)
         elif m is SimFusion_4in:
             c2 = sum(ch[x] for x in f)
         elif m is SimFusion_3in:
