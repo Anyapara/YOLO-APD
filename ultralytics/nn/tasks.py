@@ -7,7 +7,7 @@ from pathlib import Path
 import torch
 import torch.nn as nn
 
-from ultralytics.nn.modules import (SimFusion_4in,SimFusion_3in,IFM,InjectionMultiSum_Auto_pool,PyramidPoolAgg,AdvPoolFusion,TopBasicLayer, AIFI, C1, C2, C3, C3TR, SPP, SimSPPF, SPPF, Bottleneck, BottleneckCSP, C2f, C2fAttn, C3Ghost, C3x,
+from ultralytics.nn.modules import (Low_FAM, Low_IFM, Split, Inject, High_FAM, High_IFM, High_LAF, SimFusion_4in,SimFusion_3in,IFM,InjectionMultiSum_Auto_pool,PyramidPoolAgg,AdvPoolFusion,TopBasicLayer, AIFI, C1, C2, C3, C3TR, SPP, SimSPPF, SPPF, Bottleneck, BottleneckCSP, C2f, C2fAttn, C3Ghost, C3x,
                                     Classify, Concat, Conv, SimConv, Conv2, ConvTranspose, Detect, DWConv, DWConvTranspose2d,
                                     Focus, GhostBottleneck, GhostConv, HGBlock, HGStem, Pose, RepC3, RepConv, C2fCIB, PSA, SCDown, 
                                     RTDETRDecoder, Segment,ResBlock_CBAM)
