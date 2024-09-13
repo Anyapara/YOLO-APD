@@ -10,7 +10,6 @@ import torch.nn as nn
 from ultralytics.nn.modules import (
     Low_FAM,
     Low_IFM,
-    Split,
     Inject,
     High_FAM,
     High_IFM,
