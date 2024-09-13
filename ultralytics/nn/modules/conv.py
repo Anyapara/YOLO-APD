@@ -720,6 +720,77 @@ class SimFusion_4in(nn.Module):
 
 
 # --------------------------------new introduced modues from paper -----------------------------------------
+
+
+class Inject(nn.Module):
+    def __init__(self, inp: int, oup: int, global_inp: list, flag: int) -> None:
+        super().__init__()
+        self.global_inp = global_inp
+        self.flag = flag
+        self.local_embedding = Conv(inp, oup, 1, act=False)
+        self.global_embedding = Conv(global_inp[self.flag], oup, 1, act=False)
+        self.global_act = Conv(global_inp[self.flag], oup, 1, act=False)
+        self.act = h_sigmoid()
+
+    def forward(self, x):
+        """
+        x_g: global features
+        x_l: local features
+        """
+        x_l, x_g = x
+        x_g = x_g[self.global_index]
+        B, C, H, W = x_l.shape
+        g_B, g_C, g_H, g_W = x_g.shape
+        use_pool = H < g_H
+
+        local_feat = self.local_embedding(x_1)
+
+        global_act = self.global_act(x_g)
+        global_feat = self.global_embedding(x_g)
+
+        if use_pool:
+            avg_pool = get_avg_pool()
+            output_size = np.array([H, W])
+
+            sig_act = avg_pool(global_act, output_size)
+            global_feat = avg_pool(global_feat, output_size)
+
+        else:
+            sig_act = F.interpolate(
+                self.act(global_act), size=(H, W), mode="bilinear", align_corners=False
+            )
+            global_feat = F.interpolate(
+                global_feat, size=(H, W), mode="bilinear", align_corners=False
+            )
+
+        out = local_feat * sig_act + global_feat
+        out = self.rep_block(out)
+        return out
+
+
+class Low_LAF(nn.Module):
+
+    def __init__(self, in_channels_list, out_channels):
+        super().__init__()
+        self.cv1 = SimConv(in_channels_list[1], out_channels, 1, 1)
+        self.cv_fuse = SimConv(int(out_channels * 2.5), out_channels, 1, 1)
+        self.downsample = nn.functional.adaptive_avg_pool2d
+
+    def forward(self, x):
+
+        N, C, H, W = x[1].shape
+        output_size = (H, W)
+
+        if torch.onnx.is_in_onnx_export():
+            self.downsample = onnx_AdaptiveAvgPool2d
+            output_size = np.array([H, W])
+
+        x0 = self.downsample(x[0], output_size)
+        x1 = self.cv1(x[1])
+        x2 = F.interpolate(x[2], size=(H, W), mode="bilinear", align_corners=False)
+        return self.cv_fuse(torch.cat((x0, x1, x2), dim=1))
+
+
 class Low_IFM(nn.Module):
     def __init__(self, in_channels, out_channel_list, embed_dims, fuse_block_num):
         super().__init__()
