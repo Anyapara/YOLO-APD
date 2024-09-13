@@ -818,8 +818,14 @@ class High_IFM(nn.Module):
                     act_layer=act_layer,
                 )
             )
-        self.trans_conv = (nn.Conv2d(in_channels, sum(out_channels_list), kernel_size=(1, 1), stride=(1, 1), padding=0)
-                  
+        self.trans_conv = nn.Conv2d(
+            in_channels,
+            sum(out_channels_list),
+            kernel_size=(1, 1),
+            stride=(1, 1),
+            padding=0,
+        )
+
         self.trans_channels = out_channels_list
 
     def forward(self, x):
