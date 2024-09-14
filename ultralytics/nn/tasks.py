@@ -953,7 +953,9 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             args.insert(1, [ch[x] for x in f])
 
         elif m is SimAM:
-            c2 = ch[f]
+            c1, c2 = ch[f], args[0]
+            if c2 != nc:
+                c2 = make_divisible(min(c2, max_channels) * width, 8)
         else:
             c2 = ch[f]
 
