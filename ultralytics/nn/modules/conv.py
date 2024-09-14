@@ -64,6 +64,39 @@ class Conv(nn.Module):
         """Perform transposed convolution of 2D data."""
         return self.act(self.conv(x))
 
+
+class GAM_Attention(nn.Module):
+    def __init__(self, in_channels, c2, rate=4):
+        super(GAM_Attention, self).__init__()
+
+        self.channel_attention = nn.Sequential(
+            nn.Linear(in_channels, int(in_channels / rate)),
+            nn.ReLU(inplace=True),
+            nn.Linear(int(in_channels / rate), in_channels),
+        )
+
+        self.spatial_attention = nn.Sequential(
+            nn.Conv2d(in_channels, int(in_channels / rate), kernel_size=7, padding=3),
+            nn.BatchNorm2d(int(in_channels / rate)),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(int(in_channels / rate), in_channels, kernel_size=7, padding=3),
+            nn.BatchNorm2d(in_channels),
+        )
+
+    def forward(self, x):
+        b, c, h, w = x.shape
+        x_permute = x.permute(0, 2, 3, 1).view(b, -1, c)
+        x_att_permute = self.channel_attention(x_permute).view(b, h, w, c)
+        x_channel_att = x_att_permute.permute(0, 3, 1, 2).sigmoid()
+
+        x = x * x_channel_att
+
+        x_spatial_att = self.spatial_attention(x).sigmoid()
+        out = x * x_spatial_att
+
+        return out
+
+
 class SimAM(torch.nn.Module):
     def __init__(self, e_lambda=1e-4):
         super(SimAM, self).__init__()
@@ -72,8 +105,8 @@ class SimAM(torch.nn.Module):
         self.e_lambda = e_lambda
 
     def __repr__(self):
-        s = self.__class__.__name__ + '('
-        s += ('lambda=%f)' % self.e_lambda)
+        s = self.__class__.__name__ + "("
+        s += "lambda=%f)" % self.e_lambda
         return s
 
     @staticmethod
@@ -86,10 +119,18 @@ class SimAM(torch.nn.Module):
         n = w * h - 1
 
         x_minus_mu_square = (x - x.mean(dim=[2, 3], keepdim=True)).pow(2)
-        y = x_minus_mu_square / (4 * (x_minus_mu_square.sum(dim=[2, 3], keepdim=True) / n + self.e_lambda)) + 0.5
+        y = (
+            x_minus_mu_square
+            / (
+                4
+                * (x_minus_mu_square.sum(dim=[2, 3], keepdim=True) / n + self.e_lambda)
+            )
+            + 0.5
+        )
 
         return x * self.activaton(y)
-        
+
+
 class SimConv(nn.Module):
     """Normal Conv with ReLU VAN_activation"""
 
