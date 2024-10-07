@@ -28,6 +28,7 @@ from ultralytics.nn.modules import (
     C3TR,
     SPP,
     SimSPPF,
+    SimSPPFAM,
     SPPF,
     Bottleneck,
     BottleneckCSP,
