@@ -138,20 +138,20 @@ class SimSPPFAM(nn.Module):
         super().__init__()
         c_ = c1 // 2  # hidden channels
         
-        # First convolutional layer
-        self.cv1 = SimConv(c1, c_, 1, 1)  # Conv layer to reduce channels by half
+        # First convolutional layer (adjust the input channels to match expectation)
+        self.cv1 = SimConv(c1, c_, 1, 1)  # Reduce channels by half (from c1 to c_)
         
-        # Second convolution after attention
-        self.cv2 = SimConv(c_ * 4, c2, 1, 1)  # Final conv layer after concatenation
+        # Adjust output channels to match 1024 channels before passing to the next layer
+        self.cv_adjust = SimConv(c_ * 4, 1024, 1, 1)  # Adjust concatenated output to 1024 channels
+        
+        # Final convolution after attention mechanism
+        self.cv2 = SimConv(1024, c2, 1, 1)  # Final conv layer after attention
         
         # Max pooling layer
         self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
         
         # SimAM attention module
         self.simam = SimAM(e_lambda)  # Instantiate SimAM with the given e_lambda value
-        
-        # Adjust output channels before final conv
-        self.channel_adjust = SimConv(c_ * 4, 1024, 1, 1)  # Adjust concatenated output to 1024 channels
     
     def forward(self, x):
         # Apply first convolution
@@ -168,11 +168,12 @@ class SimSPPFAM(nn.Module):
         # Apply SimAM attention
         attention_output = self.simam(concatenated_output)
         
-        # Adjust the number of channels before final conv
-        adjusted_output = self.channel_adjust(attention_output)
+        # Adjust the number of channels to match 1024 before final conv
+        adjusted_output = self.cv_adjust(attention_output)
         
-        # Apply the second convolution on the attended feature map
+        # Apply the second convolution to reduce channels to c2
         return self.cv2(adjusted_output)
+
 
 
 
