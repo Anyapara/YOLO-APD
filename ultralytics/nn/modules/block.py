@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from .conv import Conv, SimConv, DWConv, GhostConv, LightConv, RepConv,SimAM
 from .transformer import TransformerBlock
 
-__all__ = ('DFL', 'HGBlock', 'HGStem', 'SPP', 'SPPF', 'SimSPPF', 'C1', 'C2', 'C3', 'C2f', 'C2fAttn', 'C3x', 'C3TR', 'C3Ghost',
+__all__ = ('DFL', 'HGBlock', 'HGStem', 'SPP', 'SPPF', 'SimSPPF','SimSPPFAM', 'C1', 'C2', 'C3', 'C2f', 'C2fAttn', 'C3x', 'C3TR', 'C3Ghost',
            'GhostBottleneck', 'Bottleneck', 'BottleneckCSP', 'Proto', 'RepC3')
 
 
