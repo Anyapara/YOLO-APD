@@ -147,6 +147,9 @@ class SimSPPFAM(nn.Module):
         
         # SimAM attention module
         self.simam = SimAM(e_lambda)  # Instantiate SimAM with the given e_lambda value
+        
+        # Adjust output channels after concatenation
+        self.channel_adjust = SimConv(c_ * 4, 1024, 1, 1)  # Adjust the concatenated output to 1024 channels
     
     def forward(self, x):
         # Apply first convolution
@@ -163,8 +166,11 @@ class SimSPPFAM(nn.Module):
         # Apply SimAM attention
         attention_output = self.simam(concatenated_output)
         
+        # Adjust the number of channels before final conv
+        adjusted_output = self.channel_adjust(attention_output)
+        
         # Apply the second convolution on the attended feature map
-        return self.cv2(attention_output)
+        return self.cv2(adjusted_output)
 
 
 class SPPF(nn.Module):
