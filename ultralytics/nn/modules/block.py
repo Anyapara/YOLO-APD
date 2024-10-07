@@ -131,8 +131,35 @@ class SimSPPF(nn.Module):
         y2 = self.m(y1)
         return self.cv2(torch.cat([x, y1, y2, self.m(y2)], 1))
 
+import torch
+import torch.nn as nn
+
+class SimConv(nn.Module):
+    """A simplified convolutional block."""
+    def __init__(self, in_channels, out_channels, kernel_size, stride):
+        super().__init__()
+        self.conv = nn.Conv2d(in_channels, out_channels, kernel_size, stride)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        return self.relu(self.conv(x))
+
+class simam_module(nn.Module):
+    """SimAM Attention Module."""
+    def __init__(self, e_lambda=1e-4):
+        super(simam_module, self).__init__()
+        self.activation = nn.Sigmoid()
+        self.e_lambda = e_lambda
+
+    def forward(self, x):
+        b, c, h, w = x.size()
+        n = w * h - 1
+        x_minus_mu_square = (x - x.mean(dim=[2, 3], keepdim=True)).pow(2)
+        y = x_minus_mu_square / (4 * (x_minus_mu_square.sum(dim=[2, 3], keepdim=True) / n + self.e_lambda)) + 0.5
+        return x * self.activation(y)
+
 class SimSPPFAM(nn.Module):
-    '''Simplified SPPF with SimAM attention'''
+    '''Simplified SPPF with SimAM attention.'''
 
     def __init__(self, c1, c2, k=5, e_lambda=1e-4):
         super().__init__()
@@ -151,7 +178,7 @@ class SimSPPFAM(nn.Module):
         self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
 
         # SimAM attention module
-        self.simam = SimAM(e_lambda)  # Instantiate SimAM with the given e_lambda value
+        self.simam = simam_module(e_lambda)  # Instantiate SimAM with the given e_lambda value
 
     def forward(self, x):
         # Apply first convolution
@@ -173,10 +200,6 @@ class SimSPPFAM(nn.Module):
 
         # Apply the second convolution to reduce channels to c2
         return self.cv2(adjusted_output)
-
-
-
-
 
 class SPPF(nn.Module):
     """Spatial Pyramid Pooling - Fast (SPPF) layer for YOLOv5 by Glenn Jocher."""
