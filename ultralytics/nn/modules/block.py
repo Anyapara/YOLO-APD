@@ -131,7 +131,7 @@ class SimSPPFAM(nn.Module):
         y2 = self.m(y1)
         return self.cv2(torch.cat([x, y1, y2, self.m(y2)], 1))
 
-class SimSPPF(nn.Module):
+class SimSPPFAM(nn.Module):
     '''Simplified SPPF with SimAM attention and VAN activation'''
     
     def __init__(self, c1, c2, k=5, e_lambda=1e-4):
