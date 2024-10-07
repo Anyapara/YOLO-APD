@@ -115,7 +115,7 @@ class SPP(nn.Module):
         x = self.cv1(x)
         return self.cv2(torch.cat([x] + [m(x) for m in self.m], 1))
                
-class SimSPPF(nn.Module):
+class SimSPPFAM(nn.Module):
     '''Simplified SPPF with ReLU VAN_activation'''
     
     def __init__(self, c1, c2, k=5):
@@ -130,6 +130,42 @@ class SimSPPF(nn.Module):
         y1 = self.m(x)
         y2 = self.m(y1)
         return self.cv2(torch.cat([x, y1, y2, self.m(y2)], 1))
+
+class SimSPPF(nn.Module):
+    '''Simplified SPPF with SimAM attention and VAN activation'''
+    
+    def __init__(self, c1, c2, k=5, e_lambda=1e-4):
+        super().__init__()
+        c_ = c1 // 2  # hidden channels
+        
+        # Convolution layers
+        self.cv1 = SimConv(c1, c_, 1, 1)  # First conv layer
+        self.cv2 = SimConv(c_ * 4, c2, 1, 1)  # Final conv layer after concatenation
+        
+        # Max pooling layer
+        self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
+        
+        # SimAM attention module
+        self.simam = SimAM(e_lambda)  # Instantiate SimAM with the given e_lambda value
+    
+    def forward(self, x):
+        # Apply first convolution
+        x = self.cv1(x)
+        
+        # Apply max pooling multiple times
+        y1 = self.m(x)
+        y2 = self.m(y1)
+        y3 = self.m(y2)  # Pool again for the third time
+        
+        # Concatenate the input and pooled outputs
+        concatenated_output = torch.cat([x, y1, y2, y3], dim=1)
+        
+        # Apply SimAM attention
+        attention_output = self.simam(concatenated_output)
+        
+        # Apply the second convolution on the attended feature map
+        return self.cv2(attention_output)
+
 
 class SPPF(nn.Module):
     """Spatial Pyramid Pooling - Fast (SPPF) layer for YOLOv5 by Glenn Jocher."""
