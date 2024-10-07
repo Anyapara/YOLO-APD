@@ -132,47 +132,48 @@ class SimSPPF(nn.Module):
         return self.cv2(torch.cat([x, y1, y2, self.m(y2)], 1))
 
 class SimSPPFAM(nn.Module):
-    '''Simplified SPPF with SimAM attention and VAN activation'''
-    
+    '''Simplified SPPF with SimAM attention'''
+
     def __init__(self, c1, c2, k=5, e_lambda=1e-4):
         super().__init__()
         c_ = c1 // 2  # hidden channels
-        
-        # First convolutional layer (adjust the input channels to match expectation)
-        self.cv1 = SimConv(c1, c_, 1, 1)  # Reduce channels by half (from c1 to c_)
-        
-        # Adjust output channels to match 1024 channels before passing to the next layer
+
+        # First convolutional layer
+        self.cv1 = SimConv(c1, c_, 1, 1)  # Conv layer to reduce channels by half
+
+        # Convolution layer after concatenation to adjust channels to 1024
         self.cv_adjust = SimConv(c_ * 4, 1024, 1, 1)  # Adjust concatenated output to 1024 channels
         
         # Final convolution after attention mechanism
         self.cv2 = SimConv(1024, c2, 1, 1)  # Final conv layer after attention
-        
+
         # Max pooling layer
         self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
-        
+
         # SimAM attention module
         self.simam = SimAM(e_lambda)  # Instantiate SimAM with the given e_lambda value
-    
+
     def forward(self, x):
         # Apply first convolution
         x = self.cv1(x)
-        
+
         # Apply max pooling multiple times
         y1 = self.m(x)
         y2 = self.m(y1)
-        y3 = self.m(y2)  # Pool again for the third time
-        
+        y3 = self.m(y2)
+
         # Concatenate the input and pooled outputs
         concatenated_output = torch.cat([x, y1, y2, y3], dim=1)
-        
+
         # Apply SimAM attention
         attention_output = self.simam(concatenated_output)
-        
+
         # Adjust the number of channels to match 1024 before final conv
         adjusted_output = self.cv_adjust(attention_output)
-        
+
         # Apply the second convolution to reduce channels to c2
         return self.cv2(adjusted_output)
+
 
 
 
