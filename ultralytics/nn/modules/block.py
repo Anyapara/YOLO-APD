@@ -115,7 +115,7 @@ class SPP(nn.Module):
         x = self.cv1(x)
         return self.cv2(torch.cat([x] + [m(x) for m in self.m], 1))
                
-class SimSPPFAM(nn.Module):
+class SimSPPF(nn.Module):
     '''Simplified SPPF with ReLU VAN_activation'''
     
     def __init__(self, c1, c2, k=5):
