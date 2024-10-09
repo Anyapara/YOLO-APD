@@ -934,7 +934,7 @@ class High_IFM(nn.Module):
         drop=0.0,
         drop_paths=(0.1, 2),
         norm_cfg=dict(typer="BN", requires_grad=True),
-        act_layer=nn.Mish6,
+        act_layer=nn.Mish,
     ):
         super().__init__()
         self.block_num = block_num
@@ -1022,7 +1022,7 @@ class IFM(nn.Module):
 class h_sigmoid(nn.Module):
     def __init__(self, inplace=True):
         super(h_sigmoid, self).__init__()
-        self.Mish = nn.Mish6(inplace=inplace)
+        self.Mish = nn.Mish(inplace=inplace)
 
     def forward(self, x):
         return self.Mish(x + 3) / 6
@@ -1138,7 +1138,7 @@ class Mlp(nn.Module):
         self.dwconv = nn.Conv2d(
             hidden_features, hidden_features, 3, 1, 1, bias=True, groups=hidden_features
         )
-        self.act = nn.Mish6()
+        self.act = nn.Mish()
         self.fc2 = Conv(hidden_features, out_features, act=False)
         self.drop = nn.Dropout(drop)
 
@@ -1178,7 +1178,7 @@ class Attention(torch.nn.Module):
         self.to_k = Conv(dim, nh_kd, 1, act=False)
         self.to_v = Conv(dim, self.dh, 1, act=False)
 
-        self.proj = torch.nn.Sequential(nn.Mish6(), Conv(self.dh, dim, act=False))
+        self.proj = torch.nn.Sequential(nn.Mish(), Conv(self.dh, dim, act=False))
 
     def forward(self, x):  # x (B,N,C)
         B, C, H, W = get_shape(x)
