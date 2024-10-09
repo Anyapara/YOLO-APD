@@ -72,14 +72,14 @@ class GAM_Attention(nn.Module):
 
         self.channel_attention = nn.Sequential(
             nn.Linear(in_channels, int(in_channels / rate)),
-            nn.ReLU(inplace=True),
+            nn.Mish(inplace=True),
             nn.Linear(int(in_channels / rate), in_channels),
         )
 
         self.spatial_attention = nn.Sequential(
             nn.Conv2d(in_channels, int(in_channels / rate), kernel_size=7, padding=3),
             nn.BatchNorm2d(int(in_channels / rate)),
-            nn.ReLU(inplace=True),
+            nn.Mish(inplace=True),
             nn.Conv2d(int(in_channels / rate), in_channels, kernel_size=7, padding=3),
             nn.BatchNorm2d(in_channels),
         )
@@ -133,7 +133,7 @@ class SimAM(torch.nn.Module):
 
 
 class SimConv(nn.Module):
-    """Normal Conv with ReLU VAN_activation"""
+    """Normal Conv with Mish VAN_activation"""
 
     def __init__(self, c1, c2, k=1, s=1, g=1, d=1, bias=False, p=None):
         super().__init__()
@@ -142,7 +142,7 @@ class SimConv(nn.Module):
             c1, c2, k, s, autopad(k, p, d), groups=g, dilation=d, bias=False
         )
         self.bn = nn.BatchNorm2d(c2)
-        # self.act = nn.LeakyReLU()
+        # self.act = nn.LeakyMish()
         self.act = nn.Mish()
 
     def forward(self, x):
@@ -185,7 +185,7 @@ class LightConv(nn.Module):
     https://github.com/PaddlePaddle/PaddleDetection/blob/develop/ppdet/modeling/backbones/hgnet_v2.py
     """
 
-    def __init__(self, c1, c2, k=1, act=nn.ReLU()):
+    def __init__(self, c1, c2, k=1, act=nn.Mish()):
         """Initialize Conv layer with given arguments including activation."""
         super().__init__()
         self.conv1 = Conv(c1, c2, 1, act=False)
@@ -452,7 +452,7 @@ class ResBlock_CBAM(nn.Module):
                 bias=False,
             ),
             nn.BatchNorm2d(places),
-            nn.LeakyReLU(0.1, inplace=True),
+            nn.LeakyMish(0.1, inplace=True),
             nn.Conv2d(
                 in_channels=places,
                 out_channels=places,
@@ -462,7 +462,7 @@ class ResBlock_CBAM(nn.Module):
                 bias=False,
             ),
             nn.BatchNorm2d(places),
-            nn.LeakyReLU(0.1, inplace=True),
+            nn.LeakyMish(0.1, inplace=True),
             nn.Conv2d(
                 in_channels=places,
                 out_channels=places * self.expansion,
@@ -486,7 +486,7 @@ class ResBlock_CBAM(nn.Module):
                 ),
                 nn.BatchNorm2d(places * self.expansion),
             )
-        self.relu = nn.ReLU(inplace=True)
+        self.Mish = nn.Mish(inplace=True)
 
     def forward(self, x):
         residual = x
@@ -496,7 +496,7 @@ class ResBlock_CBAM(nn.Module):
             residual = self.downsample(x)
 
         out += residual
-        out = self.relu(out)
+        out = self.Mish(out)
         return out
 
 
@@ -583,7 +583,7 @@ class RepVGGBlock(nn.Module):
 
         padding_11 = padding - kernel_size // 2
 
-        self.nonlinearity = nn.ReLU()
+        self.nonlinearity = nn.Mish()
 
         if use_se:
             raise NotImplementedError("se block not supported yet")
@@ -732,21 +732,21 @@ class SimFusion_3in(nn.Module):
     def __init__(self, in_channel_list, out_channels):
         super().__init__()
         self.cv1 = (
-            Conv(in_channel_list[0], out_channels, act=nn.ReLU())
+            Conv(in_channel_list[0], out_channels, act=nn.Mish())
             if in_channel_list[0] != out_channels
             else nn.Identity()
         )
         self.cv2 = (
-            Conv(in_channel_list[1], out_channels, act=nn.ReLU())
+            Conv(in_channel_list[1], out_channels, act=nn.Mish())
             if in_channel_list[1] != out_channels
             else nn.Identity()
         )
         self.cv3 = (
-            Conv(in_channel_list[2], out_channels, act=nn.ReLU())
+            Conv(in_channel_list[2], out_channels, act=nn.Mish())
             if in_channel_list[2] != out_channels
             else nn.Identity()
         )
-        self.cv_fuse = Conv(out_channels * 3, out_channels, act=nn.ReLU())
+        self.cv_fuse = Conv(out_channels * 3, out_channels, act=nn.Mish())
         self.downsample = nn.functional.adaptive_avg_pool2d
 
     def forward(self, x):
@@ -934,7 +934,7 @@ class High_IFM(nn.Module):
         drop=0.0,
         drop_paths=(0.1, 2),
         norm_cfg=dict(typer="BN", requires_grad=True),
-        act_layer=nn.ReLU6,
+        act_layer=nn.Mish6,
     ):
         super().__init__()
         self.block_num = block_num
@@ -1022,10 +1022,10 @@ class IFM(nn.Module):
 class h_sigmoid(nn.Module):
     def __init__(self, inplace=True):
         super(h_sigmoid, self).__init__()
-        self.relu = nn.ReLU6(inplace=inplace)
+        self.Mish = nn.Mish6(inplace=inplace)
 
     def forward(self, x):
-        return self.relu(x + 3) / 6
+        return self.Mish(x + 3) / 6
 
 
 class InjectionMultiSum_Auto_pool(nn.Module):
@@ -1138,7 +1138,7 @@ class Mlp(nn.Module):
         self.dwconv = nn.Conv2d(
             hidden_features, hidden_features, 3, 1, 1, bias=True, groups=hidden_features
         )
-        self.act = nn.ReLU6()
+        self.act = nn.Mish6()
         self.fc2 = Conv(hidden_features, out_features, act=False)
         self.drop = nn.Dropout(drop)
 
@@ -1178,7 +1178,7 @@ class Attention(torch.nn.Module):
         self.to_k = Conv(dim, nh_kd, 1, act=False)
         self.to_v = Conv(dim, self.dh, 1, act=False)
 
-        self.proj = torch.nn.Sequential(nn.ReLU6(), Conv(self.dh, dim, act=False))
+        self.proj = torch.nn.Sequential(nn.Mish6(), Conv(self.dh, dim, act=False))
 
     def forward(self, x):  # x (B,N,C)
         B, C, H, W = get_shape(x)
