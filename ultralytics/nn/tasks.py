@@ -28,6 +28,7 @@ from ultralytics.nn.modules import (
     Concat,
     Conv,
     Conv2,
+    C3ghost,
     ConvTranspose,
     Detect,
     DWConv,
