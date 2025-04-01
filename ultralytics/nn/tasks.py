@@ -22,6 +22,7 @@ from ultralytics.nn.modules import (
     C2fAttn,
     ImagePoolingAttn,
     C3Ghost,
+    C3ghost,
     C3x,
     Classify,
     Concat,
@@ -51,8 +52,15 @@ from ultralytics.nn.modules import (
     Silence,
     C2fCIB,
     PSA,
+    SimAm,
     SCDown,
+    Odconv,
+    SimSPPF,
+    SimFusion4,
+    InjectMultisum,
+    GD,
     RepVGGDW,
+    Detec,
     v10Detect
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, colorstr, emojis, yaml_load
