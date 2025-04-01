@@ -28,6 +28,7 @@ __all__ = (
     "C3x",
     "C3TR",
     "C3Ghost",
+    "C3ghost",
     "GhostBottleneck",
     "Bottleneck",
     "BottleneckCSP",
