@@ -48,6 +48,7 @@ from .block import (
     Silence,
     PSA,
     SimAM,
+    SimFusion4,
     C2fCIB,
     SCDown,
     Odconv,
