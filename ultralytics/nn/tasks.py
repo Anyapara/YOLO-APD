@@ -53,7 +53,7 @@ from ultralytics.nn.modules import (
     Silence,
     C2fCIB,
     PSA,
-    SimAm,
+    SimAM,
     SCDown,
     Odconv,
     SimSPPF,
