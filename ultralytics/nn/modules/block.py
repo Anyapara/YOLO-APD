@@ -20,7 +20,7 @@ __all__ = (
     "C2",
     "C3",
     "C2f",
-    "Simfusion4",
+    "SimFusion4",
     "C2fAttn",
     "ImagePoolingAttn",
     "ContrastiveHead",
