@@ -25,6 +25,7 @@ from .block import (
     DFL,
     SPP,
     SPPF,
+    SimSPPF,
     Bottleneck,
     BottleneckCSP,
     C2f,
