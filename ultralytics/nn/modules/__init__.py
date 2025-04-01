@@ -53,7 +53,6 @@ from .block import (
     SCDown,
     Odconv,
     GD,
-    SimFusion4,
     InjectMultisum,
     RepVGGDW,
 )
