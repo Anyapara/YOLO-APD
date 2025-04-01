@@ -31,6 +31,7 @@ from .block import (
     C2fAttn,
     ImagePoolingAttn,
     C3Ghost,
+    C3ghost,
     C3x,
     GhostBottleneck,
     HGBlock,
