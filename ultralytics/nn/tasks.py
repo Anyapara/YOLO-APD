@@ -896,6 +896,8 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             C3x,
             RepC3,
             PSA,
+            SimAM,
+            SimFusion4,
             SCDown,
             C2fCIB
         }:
