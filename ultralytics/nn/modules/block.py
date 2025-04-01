@@ -414,6 +414,15 @@ class C3Ghost(C3):
         c_ = int(c2 * e)  # hidden channels
         self.m = nn.Sequential(*(GhostBottleneck(c_, c_) for _ in range(n)))
 
+class C3ghost(C3):
+    """C3 module with GhostBottleneck()."""
+
+    def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5):
+        """Initialize 'SPP' module with various pooling sizes for spatial pyramid pooling."""
+        super().__init__(c1, c2, n, shortcut, g, e)
+        c_ = int(c2 * e)  # hidden channels
+        self.m = nn.Sequential(*(GhostBottleneck(c_, c_) for _ in range(n)))
+
 
 class GhostBottleneck(nn.Module):
     """Ghost Bottleneck https://github.com/huawei-noah/ghostnet."""
