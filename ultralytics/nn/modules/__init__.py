@@ -47,9 +47,14 @@ from .block import (
     CBLinear,
     Silence,
     PSA,
+    SimAm,
     C2fCIB,
     SCDown,
-    RepVGGDW
+    Odconv,
+    GD,
+    SimFusion4,
+    InjectMultisum,
+    RepVGGDW,
 )
 from .conv import (
     CBAM,
@@ -66,7 +71,17 @@ from .conv import (
     RepConv,
     SpatialAttention,
 )
-from .head import OBB, Classify, Detect, Pose, RTDETRDecoder, Segment, WorldDetect, v10Detect
+from .head import (
+    OBB,
+    Classify,
+    Detect,
+    Pose,
+    RTDETRDecoder,
+    Segment,
+    WorldDetect,
+    Detec,
+    v10Detect,
+)
 from .transformer import (
     AIFI,
     MLP,
@@ -103,6 +118,7 @@ __all__ = (
     "HGStem",
     "SPP",
     "SPPF",
+    "SimSPPF",
     "C1",
     "C2",
     "C3",
@@ -111,6 +127,7 @@ __all__ = (
     "C3x",
     "C3TR",
     "C3Ghost",
+    "C3ghost",
     "GhostBottleneck",
     "Bottleneck",
     "BottleneckCSP",
@@ -140,8 +157,14 @@ __all__ = (
     "CBLinear",
     "Silence",
     "PSA",
+    "GD",
+    "Odconv",
+    "InjectMultisum",
+    "SimFusion4",
+    "SimAm",
+    "Detec",
     "C2fCIB",
     "SCDown",
     "RepVGGDW",
-    "v10Detect"
+    "v10Detect",
 )
