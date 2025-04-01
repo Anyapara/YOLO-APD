@@ -119,6 +119,7 @@ __all__ = (
     "SPP",
     "SPPF",
     "SimSPPF",
+    "Simfusion4",
     "C1",
     "C2",
     "C3",
