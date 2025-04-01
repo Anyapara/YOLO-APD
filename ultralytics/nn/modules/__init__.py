@@ -47,7 +47,7 @@ from .block import (
     CBLinear,
     Silence,
     PSA,
-    SimAm,
+    SimAM,
     C2fCIB,
     SCDown,
     Odconv,
