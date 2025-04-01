@@ -30,11 +30,13 @@ from ultralytics.nn.modules import (
     C2fAttn,
     ImagePoolingAttn,
     C3Ghost,
+    C3ghost,
     C3x,
     Classify,
     Concat,
     Conv,
     Conv2,
+    C3ghost,
     ConvTranspose,
     Detect,
     DWConv,
@@ -59,8 +61,15 @@ from ultralytics.nn.modules import (
     Silence,
     C2fCIB,
     PSA,
+    SimAM,
     SCDown,
+    Odconv,
+    SimSPPF,
+    SimFusion4,
+    InjectMultisum,
+    GD,
     RepVGGDW,
+    Detec,
     v10Detect
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, colorstr, emojis, yaml_load
@@ -897,6 +906,8 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             C3x,
             RepC3,
             PSA,
+            SimAM,
+            SimFusion4,
             SCDown,
             C2fCIB
         }:

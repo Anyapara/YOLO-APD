@@ -32,6 +32,7 @@ from .block import (
     C2fAttn,
     ImagePoolingAttn,
     C3Ghost,
+    C3ghost,
     C3x,
     GhostBottleneck,
     HGBlock,
@@ -48,9 +49,20 @@ from .block import (
     CBLinear,
     Silence,
     PSA,
+<<<<<<< HEAD
     C2fCIB,
     SCDown,
     RepVGGDW
+=======
+    SimAM,
+    SimFusion4,
+    C2fCIB,
+    SCDown,
+    Odconv,
+    GD,
+    InjectMultisum,
+    RepVGGDW,
+>>>>>>> 2f9042c54059dd247f423d28a2c31758ffa7af0d
 )
 from .conv import (
     SimFusion_4in,
@@ -114,6 +126,7 @@ __all__ = (
     "SPP",
     "SPPF",
     "SimSPPF",
+    "Simfusion4",
     "C1",
     "C2",
     "C3",
