@@ -19,6 +19,8 @@ from ultralytics.nn.modules import (
     C2,
     C3,
     C3TR,
+    GD,
+    Detector,
     OBB,
     SPP,
     SPPF,
@@ -34,6 +36,7 @@ from ultralytics.nn.modules import (
     Classify,
     Concat,
     Conv,
+    SimFusion4,
     Conv2,
     ConvTranspose,
     Detect,
@@ -59,8 +62,12 @@ from ultralytics.nn.modules import (
     Silence,
     C2fCIB,
     PSA,
+    SimAM,
     SCDown,
+    C3ghost,
+    OdvConv,
     RepVGGDW,
+    Detector,
     v10Detect
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, colorstr, emojis, yaml_load
@@ -312,6 +319,10 @@ class DetectionModel(BaseModel):
             forward = lambda x: self.forward(x)[0] if isinstance(m, (Segment, Pose, OBB)) else self.forward(x)
             if isinstance(m, v10Detect):
                 forward = lambda x: self.forward(x)["one2many"]
+                
+            elif isinstance(m, Detector):  
+                forward = lambda x: self.forward(x)["one2many"]  # Use "one2one" predictions for Detector
+    
             m.stride = torch.tensor([s / x.shape[-2] for x in forward(torch.zeros(1, ch, s, s))])  # forward
             self.stride = m.stride
             m.bias_init()  # only run once
@@ -897,7 +908,11 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             C3x,
             RepC3,
             PSA,
+            SimAM,
             SCDown,
+            C3ghost,
+            GD,
+            OdvConv,
             C2fCIB
         }:
             c1, c2 = ch[f], args[0]
@@ -910,7 +925,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 )  # num heads
 
             args = [c1, c2, *args[1:]]
-            if m in (BottleneckCSP, C1, C2, C2f, C2fAttn, C3, C3TR, C3Ghost, C3x, RepC3, C2fCIB):
+            if m in (BottleneckCSP, C1, C2, C2f, SimFusion4, C2fAttn, C3, C3TR, C3Ghost, C3x, RepC3, GD, C2fCIB):
                 args.insert(2, n)  # number of repeats
                 n = 1
         elif m is AIFI:
