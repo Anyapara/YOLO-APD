@@ -23,11 +23,13 @@ from ultralytics.nn.modules import (
     C3,
     C3TR,
     GD,
+    C2f_SimAM2,
     Detector,
     OBB,
     SPP,
     SPPF,
     SimSPPF,
+    SimAM2,
     SimConv,
     Bottleneck,
     BottleneckCSP,
@@ -1048,6 +1050,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             OdvConv,
             C2fCIB,
             AKConv,
+            C2f_SimAM2,
         }:
             c1, c2 = ch[f], args[0]
             if (
