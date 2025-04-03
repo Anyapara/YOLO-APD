@@ -2,6 +2,7 @@
 
 import contextlib
 from copy import deepcopy
+from .AddModules import *
 from pathlib import Path
 
 
@@ -1044,6 +1045,7 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             RepC3,
             PSA,
             SimAM,
+            SimAM2,
             SCDown,
             C3ghost,
             GD,
