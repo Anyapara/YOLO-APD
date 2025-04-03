@@ -1,3 +1,6 @@
+import torch 
+import torch.nn as nn
+
 class SimAM2(torch.nn.Module):
     def __init__(self, channels=None, e_lambda=1e-4):
         super(SimAM2, self).__init__()
