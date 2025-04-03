@@ -55,6 +55,7 @@ from .block import (
     SCDown,
     C3ghost,
     OdvConv,
+    
     RepVGGDW
 )
 from .conv import (
@@ -78,6 +79,7 @@ from .conv import (
     GhostConv,
     LightConv,
     RepConv,
+    AKConv,
     SpatialAttention,
 )
 from .head import OBB, Classify, Detect, Pose, RTDETRDecoder, Segment, WorldDetect, Detector, v10Detect

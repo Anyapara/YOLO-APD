@@ -975,7 +975,7 @@ class AKConv(nn.Module):
         )
         nn.init.constant_(self.p_conv.weight, 0)
         self.p_conv.register_full_backward_hook(self._set_lr)
-        # self.register_buffer("p_n", self._get_p_n(N=self.num_param))
+        self.register_buffer("p_n", self._get_p_n(N=self.num_param))
 
     @staticmethod
     def _set_lr(module, grad_input, grad_output):
