@@ -26,6 +26,41 @@ __all__ = (
 )
 
 
+class SimAM2(torch.nn.Module):
+    def __init__(self, channels=None, e_lambda=1e-4):
+        super(SimAM2, self).__init__()
+
+        self.activaton = nn.Sigmoid()
+        self.e_lambda = e_lambda
+
+    def __repr__(self):
+        s = self.__class__.__name__ + "("
+        s += "lambda=%f)" % self.e_lambda
+        return s
+
+    @staticmethod
+    def get_module_name():
+        return "simam"
+
+    def forward(self, x):
+
+        b, c, h, w = x.size()
+
+        n = w * h - 1
+
+        x_minus_mu_square = (x - x.mean(dim=[2, 3], keepdim=True)).pow(2)
+        y = (
+            x_minus_mu_square
+            / (
+                4
+                * (x_minus_mu_square.sum(dim=[2, 3], keepdim=True) / n + self.e_lambda)
+            )
+            + 0.5
+        )
+
+        return x * self.activaton(y)
+
+
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
     """Pad to 'same' shape outputs."""
     if d > 1:
@@ -975,7 +1010,7 @@ class AKConv(nn.Module):
         )
         nn.init.constant_(self.p_conv.weight, 0)
         self.p_conv.register_full_backward_hook(self._set_lr)
-        self.register_buffer("p_n", self._get_p_n(N=self.num_param))
+        # self.register_buffer("p_n", self._get_p_n(N=self.num_param))
 
     @staticmethod
     def _set_lr(module, grad_input, grad_output):
