@@ -3,7 +3,7 @@
 import contextlib
 from copy import deepcopy
 from pathlib import Path
-from .Extramodule import *
+
 
 import torch
 import torch.nn as nn
@@ -71,6 +71,7 @@ from ultralytics.nn.modules import (
     OdvConv,
     RepVGGDW,
     Detector,
+    AKConv,
     v10Detect,
 )
 from ultralytics.utils import (
