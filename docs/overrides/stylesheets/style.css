@@ -1,3 +1,5 @@
+/* Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license */
+
 /* Table format like GitHub ----------------------------------------------------------------------------------------- */
 th,
 td {
@@ -49,9 +51,174 @@ div.highlight {
   max-height: 75vh;
 }
 
-/* Update the background of the banner (same as the one on the Ultralytics website) */
+/* Banner ----------------------------------------------------------------------------------------------------------- */
 .md-banner {
-  background-image: url(https://uploads-ssl.webflow.com/646dd1f1a3703e451ba81ecc/65e60cd6a4080bba757850a3_banner_ct.webp);
+  background-image: url(https://github.com/ultralytics/docs/releases/download/0/announcement_bar_yolo11.avif);
   background-size: cover;
   background-position: center;
 }
+
+.md-banner__inner {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.banner-wrapper,
+.banner-wrapper > .banner-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-wrapper,
+.banner-wrapper > .banner-content-wrapper {
+  flex-direction: column;
+}
+
+.banner-wrapper {
+  padding: 16px;
+}
+
+.banner-wrapper > .banner-content-wrapper {
+  gap: 4px;
+}
+
+.banner-wrapper > .banner-content-wrapper > p {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+@media screen and (min-width: 768px) {
+  .banner-wrapper,
+  .banner-wrapper > .banner-content-wrapper {
+    flex-direction: row;
+  }
+
+  .banner-wrapper {
+    padding: 12px;
+  }
+
+  .banner-wrapper > .banner-content-wrapper {
+    gap: 16px;
+    margin: 0 auto;
+  }
+}
+/* Banner ----------------------------------------------------------------------------------------------------------- */
+
+/* MkDocs Ultralytics Plugin ---------------------------------------------------------------------------------------- */
+.git-info,
+.dates-container,
+.authors-container,
+.share-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.git-info {
+  font-size: 0.8em;
+  color: grey;
+  margin-bottom: 10px;
+}
+
+.dates-container,
+.authors-container {
+  margin-bottom: 10px;
+}
+
+.date-item,
+.author-link,
+.share-button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.date-item {
+  margin-right: 10px;
+}
+
+.hover-item {
+  transition: all 0.2s ease;
+  filter: grayscale(100%);
+}
+
+.date-item .hover-item {
+  font-size: 1.6em;
+  margin-right: 5px;
+}
+
+.author-link .hover-item {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 3px;
+  background-color: #f0f0f0; /* Placeholder color */
+  opacity: 0; /* Start fully transparent */
+  transition: opacity 0.3s ease-in-out;
+}
+
+.author-link .hover-item[src] {
+  opacity: 1; /* Fade in when src is set (image loaded) */
+}
+
+.hover-item:hover {
+  transform: scale(1.2);
+  filter: grayscale(0%);
+}
+
+.share-buttons {
+  margin-top: 10px;
+}
+
+.share-button {
+  background-color: #1da1f2;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: none;
+  font-size: 0.95em;
+  margin: 5px;
+  transition: all 0.2s ease;
+}
+
+.share-button:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.share-button.linkedin {
+  background-color: #0077b5;
+}
+
+.share-button i {
+  margin-right: 5px;
+  font-size: 1.1em;
+}
+
+@media (max-width: 1024px) {
+  .git-info {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .dates-container,
+  .authors-container {
+    width: 100%;
+  }
+}
+/* MkDocs Ultralytics Plugin ---------------------------------------------------------------------------------------- */
+
+/* Inkeep ----------------------------------------------------------------------------------------------------------- */
+.ikp-floating-button {
+  color: #111f68;
+}
+#inkeepSearchBar {
+  transition: all 0.2s ease-in-out;
+}
+#inkeepSearchBar:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+/* Inkeep ----------------------------------------------------------------------------------------------------------- */
