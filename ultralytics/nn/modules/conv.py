@@ -135,6 +135,67 @@ class Conv(nn.Module):
         return self.act(self.conv(x))
 
 
+
+class SimConv(nn.Module):
+    """
+    YOLOv8-compatible convolution with BatchNorm, Mish activation, and Conv+BN fusion.
+    """
+
+    def __init__(self, c1, c2, k=1, s=1, p=None, g=1, d=1, act=True):
+        super().__init__()
+        self.conv = nn.Conv2d(c1, c2, k, s, autopad(k, p, d), groups=g, dilation=d, bias=False)
+        self.bn = nn.BatchNorm2d(c2)
+        
+        # Activation: Mish by default, or custom
+        self.act = act if isinstance(act, nn.Module) else nn.Mish() if act is True else nn.Identity()
+        
+        self.fused = False  # Will be True if fuse_model() is called
+
+    def forward(self, x):
+        if self.fused:
+            return self.act(self.fused_conv(x))
+        return self.act(self.bn(self.conv(x)))
+
+    def fuse_conv_and_bn(self):
+        """Manually fuse Conv2d and BatchNorm2d for inference."""
+        if self.bn.running_var is None or self.bn.running_var == 0:
+            raise ValueError("BatchNorm layer must be initialized before fusion.")
+        
+        fused_conv = nn.Conv2d(
+            self.conv.in_channels,
+            self.conv.out_channels,
+            self.conv.kernel_size,
+            self.conv.stride,
+            self.conv.padding,
+            self.conv.dilation,
+            self.conv.groups,
+            bias=True,
+        )
+
+        # Prepare weights
+        w_conv = self.conv.weight.clone().view(self.conv.out_channels, -1)
+        w_bn = self.bn.weight / torch.sqrt(self.bn.running_var + self.bn.eps)
+        fused_weight = (w_conv.T * w_bn).T.view_as(self.conv.weight)
+        fused_conv.weight.data.copy_(fused_weight)
+
+        # Prepare bias
+        if self.conv.bias is None:
+            bias = torch.zeros(self.conv.out_channels, device=w_conv.device)
+        else:
+            bias = self.conv.bias
+
+        b_bn = self.bn.bias - self.bn.weight * self.bn.running_mean / torch.sqrt(self.bn.running_var + self.bn.eps)
+        fused_conv.bias.data.copy_(bias + b_bn)
+
+        return fused_conv
+
+    def fuse_model(self):
+        """Replace conv+bn with fused conv for faster inference."""
+        self.fused_conv = self.fuse_conv_and_bn()
+        del self.conv, self.bn
+        self.fused = True
+
+
 class Conv2(Conv):
     """
     Simplified RepConv module with Conv fusing.
