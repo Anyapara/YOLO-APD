@@ -16,6 +16,7 @@ __all__ = (
     "HGStem",
     "SPP",
     "SPPF",
+    "SimSPPF",
     "C1",
     "C2",
     "C3",
@@ -232,6 +233,31 @@ class SPPF(nn.Module):
         y = [self.cv1(x)]
         y.extend(self.m(y[-1]) for _ in range(3))
         return self.cv2(torch.cat(y, 1))
+
+class SimSPPF(nn.Module):
+    """
+    SimSPPF: Spatial Pyramid Pooling - Fast using SimConv and Mish activation.
+    """
+
+    def __init__(self, c1, c2, k=5):
+        """
+        Args:
+            c1 (int): Number of input channels.
+            c2 (int): Number of output channels.
+            k (int): MaxPool2D kernel size (default=5).
+        """
+        super().__init__()
+        c_ = c1 // 2  # reduced channel size
+        self.cv1 = SimConv(c1, c_, 1, 1)
+        self.cv2 = SimConv(c_ * 4, c2, 1, 1)
+        self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
+
+    def forward(self, x):
+        x = self.cv1(x)
+        y1 = self.m(x)
+        y2 = self.m(y1)
+        y3 = self.m(y2)
+        return self.cv2(torch.cat([x, y1, y2, y3], dim=1))
 
 
 class C1(nn.Module):
