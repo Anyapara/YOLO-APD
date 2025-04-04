@@ -248,8 +248,10 @@ class SimSPPF(nn.Module):
         """
         super().__init__()
         c_ = c1 // 2  # reduced channel size
-        self.cv1 = SimConv(c1, c_, 1, 1)
-        self.cv2 = SimConv(c_ * 4, c2, 1, 1)
+        #self.cv1 = SimConv(c1, c_, 1, 1)
+        #self.cv2 = SimConv(c_ * 4, c2, 1, 1)
+        self.cv1 = SimConv(c1, c1, 1, 1)  # Keep c1 for channel size to avoid over-reduction
+        self.cv2 = SimConv(c1 * 4, c2, 1, 1)  # Concatenate 4 pooled branches
         self.m = nn.MaxPool2d(kernel_size=k, stride=1, padding=k // 2)
 
     def forward(self, x):
