@@ -65,7 +65,7 @@ from .conv import (
     ChannelAttention,
     Concat,
     Conv,
-    SimAM2,
+    SimAM,
     Conv2,
     ConvTranspose,
     DWConv,
