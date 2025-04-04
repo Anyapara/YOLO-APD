@@ -75,6 +75,7 @@ from ultralytics.nn.modules import (
     RepVGGDW,
     Detector,
     AKConv,
+    SimAM2,
     v10Detect,
 )
 from ultralytics.utils import (
