@@ -9,7 +9,7 @@ import torch.nn as nn
 
 __all__ = (
     "Conv",
-    "SimAM2",
+    "SimAM",
     "Conv2",
     "LightConv",
     "DWConv",
@@ -26,9 +26,9 @@ __all__ = (
 )
 
 
-class SimAM2(torch.nn.Module):
+class SimAM(torch.nn.Module):
     def __init__(self, channels=None, e_lambda=1e-4):
-        super(SimAM2, self).__init__()
+        super(SimAM, self).__init__()
 
         self.activaton = nn.Sigmoid()
         self.e_lambda = e_lambda
