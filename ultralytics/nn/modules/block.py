@@ -23,6 +23,7 @@ __all__ = (
     "C2f",
     "SimFusion4",
     "SimAM",
+    "SimAM2",
     "C2fAttn",
     "ImagePoolingAttn",
     "ContrastiveHead",
