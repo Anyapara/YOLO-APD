@@ -42,6 +42,7 @@ from ultralytics.nn.modules import (
     Concat,
     Conv,
     SimAM,
+    SimConv,
     Conv2,
     ConvTranspose,
     Detect,
